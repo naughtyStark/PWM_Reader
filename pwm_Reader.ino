@@ -1,8 +1,8 @@
 
 
-volatile unsigned long timer[7];
-volatile byte last_channel[6]={0,0,0,0,0,0};
-volatile int input[6]={1500,1500,1500,1500,1500,1500};
+volatile unsigned long timer[6];
+volatile byte last_channel[5]={0,0,0,0,0};
+volatile int input[5]={1500,1500,1500,1500,1500};
 
 void setup()
 {
@@ -12,7 +12,6 @@ void setup()
   PCMSK0 |= (1 << PCINT2); //10
   PCMSK0 |= (1 << PCINT3); //11
   PCMSK0 |= (1 << PCINT4); //12
-  PCMSK0 |= (1 << PCINT5); //13
   Serial.begin(38400);
   //steer.attach(10);
 }
@@ -79,22 +78,6 @@ ISR(PCINT0_vect)
     last_channel[4]=0;
     input[4]=timer[0]-timer[5];
   }
-  
-  //channel 6-- 
-  if(last_channel[5]==0&& PINB & B00100000) //makes sure that the first pin was initially low and is now high
-  {                                         //PINB & B00000001 is equivalent to digitalRead but faster
-    last_channel[5]=1;
-    timer[6]=timer[0];          
-  }
-  else if(last_channel[5]==1 && !(PINB & B00100000))
-  {
-    last_channel[5]=0;
-    input[5]=timer[0]-timer[6];
-  }
-
-  
-
-  
 }
 
 void serialprint()
@@ -104,17 +87,11 @@ void serialprint()
   Serial.print(input[2]);Serial.print("||");
   Serial.print(input[3]);Serial.print("||");
   Serial.print(input[4]);Serial.print("||");
-  Serial.print(input[5]);Serial.print("||");
-  
   Serial.println();
-  
-
 }
   
 void loop()
 {
- // Serial.println(input[0]);
-//  steer.writeMicroseconds(input[0]);
   serialprint();
 }
 
